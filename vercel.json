@@ -1,26 +1,12 @@
 {
-  "version": 2,
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/server/src/server.ts"
+      "destination": "/api"
     },
     {
-      "source": "/((?!api/.*).*)",
+      "source": "/((?!api/|assets/|favicon.ico).*)",
       "destination": "/index.html"
-    }
-  ],
-  "builds": [
-    {
-      "src": "server/src/server.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
     }
   ]
 }
