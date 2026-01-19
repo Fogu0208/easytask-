@@ -10,9 +10,17 @@
       "destination": "/index.html"
     }
   ],
-  "functions": {
-    "server/src/server.ts": {
-      "maxDuration": 10
+  "builds": [
+    {
+      "src": "server/src/server.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
-  }
+  ]
 }
