@@ -8,7 +8,7 @@ import taskRoutes from './routes/taskRoutes';
 dotenv.config();
 
 // 连接数据库
-connectDB();
+const dbReady = connectDB();
 
 const app = express();
 
@@ -16,6 +16,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(async (_req, res, next) => {
+  try {
+    await dbReady;
+    next();
+  } catch (err) {
+    res.status(500).json({ message: '数据库连接失败' });
+  }
+});
 
 // 路由
 app.use('/api/auth', authRoutes);
