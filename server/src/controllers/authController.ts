@@ -5,7 +5,11 @@ import User from '../models/User';
 
 // 生成 JWT Token
 const generateToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET 未配置');
+  }
+
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
@@ -17,6 +21,10 @@ export const registerUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   try {
+    if (!username || !password) {
+      return res.status(400).json({ message: '请填写用户名和密码' });
+    }
+
     // 检查用户是否已存在
     const userExists = await User.findOne({ username });
 
@@ -44,7 +52,13 @@ export const registerUser = async (req: Request, res: Response) => {
       res.status(400).json({ message: '无效的用户数据' });
     }
   } catch (error) {
-    res.status(500).json({ message: '服务器错误' });
+    const err = error as any;
+    if (err?.code === 11000) {
+      return res.status(400).json({ message: '用户名已存在' });
+    }
+
+    console.error('registerUser error:', error);
+    res.status(500).json({ message: err?.message || '服务器错误' });
   }
 };
 
@@ -55,6 +69,10 @@ export const loginUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   try {
+    if (!username || !password) {
+      return res.status(400).json({ message: '请填写用户名和密码' });
+    }
+
     // 查找用户 (只支持用户名登录)
     const user = await User.findOne({ username });
 
@@ -69,6 +87,8 @@ export const loginUser = async (req: Request, res: Response) => {
       res.status(401).json({ message: '用户名或密码错误' });
     }
   } catch (error) {
-    res.status(500).json({ message: '服务器错误' });
+    console.error('loginUser error:', error);
+    const err = error as any;
+    res.status(500).json({ message: err?.message || '服务器错误' });
   }
 };
