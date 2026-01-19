@@ -2,7 +2,7 @@
   "name": "easytask-root",
   "private": true,
   "scripts": {
-    "build": "echo 'Root build skipped'"
+    "build": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
