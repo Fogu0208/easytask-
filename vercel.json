@@ -6,21 +6,13 @@
       "destination": "/server/src/server.ts"
     },
     {
-      "source": "/(.*)",
-      "destination": "/client/dist/$1"
+      "source": "/((?!api/.*).*)",
+      "destination": "/index.html"
     }
   ],
-  "builds": [
-    {
-      "src": "server/src/server.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+  "functions": {
+    "server/src/server.ts": {
+      "maxDuration": 10
     }
-  ]
+  }
 }
